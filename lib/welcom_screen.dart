@@ -56,7 +56,7 @@ class WelcomScreen extends StatelessWidget {
                   SizedBox(width: 16),
                   ItemSelection(symbol: 'o'),
                 ],),
-              )
+              ),
             ],
           ),
         ),
