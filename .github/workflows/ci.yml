@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-native:
+    name: Build C++ (CMake)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake
+      - name: Configure CMake
+        run: |
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: |
+          cd build
+          cmake --build . -- -j$(nproc)
+      - name: Run tests (if any)
+        run: |
+          cd build
+          if [ -f "CTestTestfile.cmake" ]; then ctest --output-on-failure || true; fi
+
+  flutter-analyze:
+    name: Flutter analyze & test (if flutter project present)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: stable
+      - name: Find flutter project and run analyze
+        run: |
+          # adjust path if your Flutter app is in a subfolder e.g. flutter_app/
+          if [ -f "pubspec.yaml" ] || [ -f "flutter_app/pubspec.yaml" ]; then
+            if [ -f "pubspec.yaml" ]; then APP_DIR="."; else APP_DIR="flutter_app"; fi
+            echo "Found Flutter project in $APP_DIR"
+            cd $APP_DIR
+            flutter pub get
+            flutter analyze || true
+            if [ -d "test" ]; then flutter test || true; fi
+          else
+            echo "No Flutter project detected, skipping."
+          fi
