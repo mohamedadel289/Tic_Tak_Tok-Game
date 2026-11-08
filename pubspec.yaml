@@ -1,5 +1,5 @@
 name: tictaktok
-description: "A new Flutter project."
+description: "A two-player Flutter Tic Tac Toe game with score tracking and round feedback."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
