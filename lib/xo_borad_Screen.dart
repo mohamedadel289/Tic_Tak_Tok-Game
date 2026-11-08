@@ -116,19 +116,19 @@ class _XoBoradScreenState extends State<XoBoradScreen> {
       board[index] = player1Symbol;
       if (checkWinner(player1Symbol)) {
         player1Score++;
-        clearboard();
+        finishRound('${player1Symbol.toUpperCase()} wins!');
         return;
       }
     } else {
       board[index] = player2Symbol;
       if (checkWinner(player2Symbol)) {
         player2Score++;
-        clearboard();
+        finishRound('${player2Symbol.toUpperCase()} wins!');
         return;
       }
     }
     if (round == 9) {
-      clearboard();
+      finishRound('Draw!');
       return;
     }
     round++;
@@ -165,5 +165,15 @@ class _XoBoradScreenState extends State<XoBoradScreen> {
     board = List.filled(9, '');
     round = 1;
     setState(() {});
+  }
+
+  void finishRound(String message) {
+    setState(() {
+      board = List.filled(9, '');
+      round = 1;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 }
